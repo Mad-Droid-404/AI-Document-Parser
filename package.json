@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "express": "^5.1.0",
+    "office-addin-dev-certs": "^2.0.3"
+  }
+}

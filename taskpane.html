@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Email Summarizer</title>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/9.6.1/css/fabric.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; }
+        .summary-container { margin-top: 20px; }
+        .summary-text { background: #f3f2f1; padding: 15px; border-radius: 4px; margin-top: 10px; }
+        .loading { text-align: center; color: #0078d4; }
+        .error { color: #d13438; background: #fdf3f4; padding: 10px; border-radius: 4px; }
+        .button-container { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="ms-welcome">
+        <h2>Email Summarizer</h2>
+        <p>Generate an AI-powered summary of the current email including body, subject, and attachments.</p>
+
+        <div class="button-container">
+            <button id="summarize-btn" class="ms-Button ms-Button--primary">
+                <span class="ms-Button-label">Summarize This Email</span>
+            </button>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <p>Analyzing email content...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="summary-container" class="summary-container" style="display: none;">
+            <h3>Email Summary</h3>
+            <div id="summary-text" class="summary-text"></div>
+
+            <h4>Email Details</h4>
+            <div id="email-details">
+                <p><strong>Subject:</strong> <span id="email-subject"></span></p>
+                <p><strong>From:</strong> <span id="email-from"></span></p>
+                <p><strong>Attachments:</strong> <span id="email-attachments"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="taskpane.js"></script>
+</body>
+</html>
