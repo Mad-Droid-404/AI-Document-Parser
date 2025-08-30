@@ -5,16 +5,14 @@
            xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" 
            xsi:type="MailApp">
 
-  <!-- Generate a unique GUID for your add-in: https://guidgen.com -->
   <Id>c8d2d463-2e62-4e79-b251-190c73f42956</Id>
   <Version>1.0.0.0</Version>
-  <ProviderName>Email Summarizer</ProviderName>
+  <ProviderName>AI architects</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   
   <DisplayName DefaultValue="AI Email Summarizer"/>
   <Description DefaultValue="AI-powered email summarization tool"/>
   
-  <!-- Icon URLs - make sure these files exist -->
   <IconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-128.png"/>
   <SupportUrl DefaultValue="https://localhost:3000"/>
@@ -112,7 +110,7 @@
       </bt:ShortStrings>
       
       <bt:LongStrings>
-        <bt:String id="TaskpaneButton.SupertipText" DefaultValue="Generate an AI-powered summary of the current email including body text, subject, and attachment analysis"/>
+        <bt:String id="TaskpaneButton.SupertipText" DefaultValue="Generate an summary of the current email including body text, subject, and attachment"/>
       </bt:LongStrings>
       
     </Resources>

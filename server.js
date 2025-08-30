@@ -6,10 +6,8 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-// Serve static files
 app.use(express.static('.'));
 
-// CORS headers for Office Add-ins
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -17,7 +15,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Try to load SSL certificates
 let sslOptions;
 try {
     sslOptions = {

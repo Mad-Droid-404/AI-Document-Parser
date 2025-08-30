@@ -1,4 +1,4 @@
-// Python backend URL - update this to match your Flask server
+// Python backend URL
 const BACKEND_URL = 'http://127.0.0.1:5000';
 
 // Initialize Office
@@ -693,7 +693,6 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// Add helpful console logs for debugging
 console.log('TaskPane JavaScript loaded');
 console.log('Backend URL:', BACKEND_URL);
 console.log('Keyboard shortcuts:');
@@ -701,6 +700,3 @@ console.log('  Ctrl+Enter: Generate summary');
 console.log('  Ctrl+C: Copy summary (when visible)');
 console.log('  Ctrl+1-6: Quick style selection');
 console.log('  Escape: Close copy modal');
-
-// Optional: Check backend connection on load (uncomment for debugging)
-// setTimeout(checkBackendConnection, 1000);
