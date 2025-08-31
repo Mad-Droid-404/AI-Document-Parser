@@ -1,5 +1,4 @@
 import os
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from transformers import pipeline, AutoTokenizer
@@ -223,6 +222,31 @@ def create_sections(email_body, attachments, summary_type, attachment_mode):
     return sections
 
 
+@app.route('/', methods=['GET'])
+def home():
+    """Root endpoint - this was missing!"""
+    return jsonify({
+        "message": "✅ Email Summarization API is running!",
+        "status": "active",
+        "endpoints": {
+            "/health": "Health check",
+            "/summarize": "POST - Summarize emails and attachments",
+            "/test": "GET - Simple test endpoint"
+        },
+        "timestamp": datetime.now().isoformat()
+    })
+
+
+@app.route('/test', methods=['GET'])
+def test():
+    """Test endpoint"""
+    return jsonify({
+        "message": "🎉 Test endpoint working!",
+        "model_status": "loaded" if summarizer else "not loaded",
+        "gpu_available": torch.cuda.is_available()
+    })
+
+
 @app.route('/summarize', methods=['POST'])
 def summarize_email():
     try:
@@ -318,4 +342,14 @@ def health_check():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    debug_mode = os.environ.get('DEBUG', 'False').lower() == 'true'
+
+    print(f"🌐 Starting Flask server on port {port}")
+    print(f"🔧 Debug mode: {debug_mode}")
+
+    app.run(
+        host='0.0.0.0',
+        port=port,
+        debug=debug_mode,
+        threaded=True
+    )
