@@ -29,6 +29,17 @@
             margin-bottom: 20px;
         }
         
+        .header h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .header-icon {
+            font-size: 20px;
+        }
+        
         .summary-options {
             margin: 20px 0;
             text-align: center;
@@ -102,6 +113,11 @@
             transform: scale(1.1);
         }
         
+        .checkbox-icon, .radio-icon {
+            margin-right: 6px;
+            font-size: 14px;
+        }
+        
         .radio-item {
             font-size: 13px;
             margin: 5px 0;
@@ -133,6 +149,11 @@
             font-size: 16px;
             cursor: pointer;
             transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 auto;
         }
         
         .summarize-btn:hover {
@@ -142,6 +163,10 @@
         .summarize-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
+        }
+        
+        .btn-icon {
+            font-size: 16px;
         }
         
         .loading {
@@ -181,6 +206,9 @@
         .summary-title {
             font-weight: bold;
             color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
         .copy-btn {
@@ -192,6 +220,9 @@
             cursor: pointer;
             font-size: 14px;
             transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
         .copy-btn:hover {
@@ -242,58 +273,66 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>AI Email & Document Summarizer</h2>
+            <h2>
+                AI Email & Document Summarizer
+            </h2>
             <p>Get summaries of your emails and attachments</p>
         </div>
         
         <div class="summary-options">
-            <label for="summary-type">Summary Style:</label>
+            <label for="summary-type">📝 Summary Style:</label>
             <select id="summary-type" class="summary-dropdown">
-                <option value="short">Short Summary</option>
-                <option value="long">Detailed Summary</option>
-                <option value="bullets">Bullet Points</option>
-                <option value="action">Action Items</option>
-                <option value="highlights">Key Highlights</option>
-                <option value="executive">Executive Summary</option>
+                <option value="short">⚡ Short Summary</option>
+                <option value="long">📄 Detailed Summary</option>
+                <option value="bullets">• Bullet Points</option>
+                <option value="action">✅ Action Items</option>
+                <option value="highlights">⭐ Key Highlights</option>
+                <option value="executive">👔 Executive Summary</option>
             </select>
         </div>
         
         <div class="parsing-options">
-            <label class="parsing-label">Content to Summarize:</label>
+            <label class="parsing-label">📁 Content to Summarize:</label>
             <div class="checkbox-group">
                 <label class="checkbox-item">
                     <input type="checkbox" id="include-email" checked>
+                    <span class="checkbox-icon">📧</span>
                     Email Body
                 </label>
                 <label class="checkbox-item">
                     <input type="checkbox" id="include-attachments" checked>
+                    <span class="checkbox-icon">📎</span>
                     Attachments
                 </label>
             </div>
             
             <div class="attachment-options" id="attachment-options">
-                <label class="parsing-label-small">Attachment Processing:</label>
+                <label class="parsing-label-small">⚙️ Attachment Processing:</label>
                 <div class="radio-group">
                     <label class="radio-item">
                         <input type="radio" name="attachment-mode" value="combined" checked>
+                        <span class="radio-icon">📦</span>
                         All attachments together
                     </label>
                     <label class="radio-item">
                         <input type="radio" name="attachment-mode" value="separate">
+                        <span class="radio-icon">📋</span>
                         Each attachment separately
                     </label>
                 </div>
             </div>
             
             <div class="section-options" id="section-options">
-                <label class="parsing-label-small">Output Format:</label>
+                <label class="parsing-label-small">🎯 Output Format:</label>
                 <div class="radio-group">
                     <label class="radio-item">
                         <input type="radio" name="output-mode" value="combined" checked>
+                        <span class="radio-icon">🔗</span>
                         Single combined summary
                     </label>
                     <label class="radio-item">
                         <input type="radio" name="output-mode" value="sections">
+                        <span class="radio-icon">📑</span>
                         Separate sections
                     </label>
                 </div>
@@ -301,7 +340,10 @@
         </div>
         
         <div class="button-container">
-            <button id="summarize-btn" class="summarize-btn">Generate Summary</button>
+            <button id="summarize-btn" class="summarize-btn">
+                <span class="btn-icon">🚀</span>
+                Generate Summary
+            </button>
         </div>
         
         <div id="loading" class="loading">
@@ -315,8 +357,14 @@
         
         <div id="summary-container" class="summary-container">
             <div class="summary-header">
-                <div class="summary-title">Summary:</div>
-                <button id="copy-btn" class="copy-btn">Copy</button>
+                <div class="summary-title">
+                    <span>📊</span>
+                    Summary:
+                </div>
+                <button id="copy-btn" class="copy-btn">
+                    <span>📋</span>
+                    Copy
+                </button>
             </div>
             <div id="summary-content" class="summary-content"></div>
         </div>
