@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Email Summarizer</title>
-    
-    <!-- Office.js -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     
     <style>
+        * { box-sizing: border-box; }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 20px;
@@ -17,7 +17,6 @@
         }
         
         .container {
-            max-width: 100%;
             background: white;
             border-radius: 8px;
             padding: 20px;
@@ -35,12 +34,20 @@
             text-align: center;
         }
         
-        .summary-options label {
+        .summary-options label, .parsing-label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #2c3e50;
             font-size: 14px;
+        }
+        
+        .parsing-label-small {
+            display: block;
+            margin: 15px 0 8px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 13px;
         }
         
         .summary-dropdown {
@@ -49,10 +56,10 @@
             border: 2px solid #e1e8ed;
             border-radius: 6px;
             font-size: 14px;
-            background-color: white;
+            background: white;
             color: #2c3e50;
             cursor: pointer;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
         }
         
         .summary-dropdown:focus {
@@ -65,33 +72,12 @@
             border-color: #0078d4;
         }
         
-        .button-container {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
         .parsing-options {
             margin: 15px 0;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 6px;
             border: 1px solid #e1e8ed;
-        }
-        
-        .parsing-label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 14px;
-        }
-        
-        .parsing-label-small {
-            display: block;
-            margin: 15px 0 8px 0;
-            font-weight: 500;
-            color: #2c3e50;
-            font-size: 13px;
         }
         
         .checkbox-group, .radio-group {
@@ -103,7 +89,6 @@
             align-items: center;
             margin: 8px 0;
             cursor: pointer;
-            font-size: 14px;
             color: #2c3e50;
             transition: color 0.2s;
         }
@@ -112,22 +97,9 @@
             color: #0078d4;
         }
         
-        .checkbox-item input[type="checkbox"],
-        .radio-item input[type="radio"] {
+        .checkbox-item input, .radio-item input {
             margin-right: 8px;
             transform: scale(1.1);
-        }
-        
-        .attachment-options, .section-options {
-            margin-left: 15px;
-            padding-left: 15px;
-            border-left: 3px solid #e1e8ed;
-            transition: all 0.3s ease;
-        }
-        
-        .attachment-options.disabled, .section-options.disabled {
-            opacity: 0.5;
-            pointer-events: none;
         }
         
         .radio-item {
@@ -135,23 +107,40 @@
             margin: 5px 0;
         }
         
+        .attachment-options, .section-options {
+            margin-left: 15px;
+            padding-left: 15px;
+            border-left: 3px solid #e1e8ed;
+            transition: all 0.3s;
+        }
+        
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
         .summarize-btn {
-            background-color: #0078d4;
+            background: #0078d4;
             color: white;
             border: none;
             padding: 12px 30px;
             border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background 0.3s;
         }
         
         .summarize-btn:hover {
-            background-color: #106ebe;
+            background: #106ebe;
         }
         
         .summarize-btn:disabled {
-            background-color: #cccccc;
+            background: #ccc;
             cursor: not-allowed;
         }
         
@@ -195,33 +184,33 @@
         }
         
         .copy-btn {
-            background-color: #28a745;
+            background: #28a745;
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
+            transition: background 0.3s;
         }
         
         .copy-btn:hover {
-            background-color: #218838;
+            background: #218838;
         }
         
         .summary-content {
             border: 1px solid #ddd;
             border-radius: 6px;
             padding: 15px;
-            background-color: #f8f9fa;
+            background: #f8f9fa;
             white-space: pre-wrap;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.5;
             max-height: 400px;
             overflow-y: auto;
         }
         
         .info-bar {
-            background-color: #e7f3ff;
+            background: #e7f3ff;
             border-left: 4px solid #0078d4;
             padding: 10px;
             margin: 10px 0;
@@ -231,7 +220,7 @@
         }
         
         .error-message {
-            background-color: #ffebee;
+            background: #ffebee;
             border-left: 4px solid #f44336;
             padding: 10px;
             margin: 10px 0;
@@ -240,63 +229,12 @@
         }
         
         .success-message {
-            background-color: #e8f5e8;
+            background: #e8f5e8;
             border-left: 4px solid #4caf50;
             padding: 10px;
             margin: 10px 0;
             color: #2e7d32;
             display: none;
-        }
-        
-        /* Copy modal styles */
-        .copy-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            padding: 20px;
-        }
-        
-        .copy-modal-content {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 90%;
-            max-height: 80%;
-            overflow: auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        
-        .copy-modal-textarea {
-            width: 100%;
-            height: 200px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 14px;
-            resize: vertical;
-            box-sizing: border-box;
-        }
-        
-        .copy-modal-button {
-            background: #0078d4;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .copy-modal-button:hover {
-            background: #106ebe;
         }
     </style>
 </head>
@@ -304,79 +242,71 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>AI Email & Doccument summerizer</h2>
+            <h2>AI Email & Document Summarizer</h2>
             <p>Get summaries of your emails and attachments</p>
         </div>
         
         <div class="summary-options">
-            <label for="summary-type">📋 Summary Style:</label>
+            <label for="summary-type">Summary Style:</label>
             <select id="summary-type" class="summary-dropdown">
-                <option value="short">📄 Short Summary</option>
-                <option value="long">📝 Detailed Summary</option>
-                <option value="bullets">🔸 Bullet Points</option>
-                <option value="action">✅ Action Items</option>
-                <option value="highlights">⭐ Key Highlights</option>
-                <option value="executive">👔 Executive Summary</option>
+                <option value="short">Short Summary</option>
+                <option value="long">Detailed Summary</option>
+                <option value="bullets">Bullet Points</option>
+                <option value="action">Action Items</option>
+                <option value="highlights">Key Highlights</option>
+                <option value="executive">Executive Summary</option>
             </select>
         </div>
         
         <div class="parsing-options">
-            <label class="parsing-label">🎯 Content to Summarize:</label>
+            <label class="parsing-label">Content to Summarize:</label>
             <div class="checkbox-group">
                 <label class="checkbox-item">
                     <input type="checkbox" id="include-email" checked>
-                    <span class="checkmark"></span>
-                    📧 Email Body
+                    Email Body
                 </label>
                 <label class="checkbox-item">
                     <input type="checkbox" id="include-attachments" checked>
-                    <span class="checkmark"></span>
-                    📎 Attachments
+                    Attachments
                 </label>
             </div>
             
             <div class="attachment-options" id="attachment-options">
-                <label class="parsing-label-small">📎 Attachment Processing:</label>
+                <label class="parsing-label-small">Attachment Processing:</label>
                 <div class="radio-group">
                     <label class="radio-item">
                         <input type="radio" name="attachment-mode" value="combined" checked>
-                        <span class="radio-checkmark"></span>
-                        🗂️ All attachments together
+                        All attachments together
                     </label>
                     <label class="radio-item">
                         <input type="radio" name="attachment-mode" value="separate">
-                        <span class="radio-checkmark"></span>
-                        📄 Each attachment separately
+                        Each attachment separately
                     </label>
                 </div>
             </div>
             
             <div class="section-options" id="section-options">
-                <label class="parsing-label-small">📊 Output Format:</label>
+                <label class="parsing-label-small">Output Format:</label>
                 <div class="radio-group">
                     <label class="radio-item">
                         <input type="radio" name="output-mode" value="combined" checked>
-                        <span class="radio-checkmark"></span>
-                        📋 Single combined summary
+                        Single combined summary
                     </label>
                     <label class="radio-item">
                         <input type="radio" name="output-mode" value="sections">
-                        <span class="radio-checkmark"></span>
-                        📂 Separate sections
+                        Separate sections
                     </label>
                 </div>
             </div>
         </div>
         
         <div class="button-container">
-            <button id="summarize-btn" class="summarize-btn">
-                Generate Summary
-            </button>
+            <button id="summarize-btn" class="summarize-btn">Generate Summary</button>
         </div>
         
         <div id="loading" class="loading">
             <div class="loading-spinner"></div>
-            <p>Processing email and attachments...</p>
+            <p>Processing content...</p>
         </div>
         
         <div id="info-bar" class="info-bar"></div>
@@ -386,7 +316,7 @@
         <div id="summary-container" class="summary-container">
             <div class="summary-header">
                 <div class="summary-title">Summary:</div>
-                <button id="copy-btn" class="copy-btn">📋 Copy</button>
+                <button id="copy-btn" class="copy-btn">Copy</button>
             </div>
             <div id="summary-content" class="summary-content"></div>
         </div>
