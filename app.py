@@ -1,7 +1,6 @@
 import os
 import re
 import io
-import uuid
 import base64
 import random
 from datetime import datetime
@@ -19,17 +18,13 @@ MAX_TOKEN_LIMIT = 1000
 CHARS_PER_TOKEN_ESTIMATE = 3
 
 SUMMARY_CONFIGS = {
-    "short": {"temp": 0.7, "top_p": 0.85, "top_k": 40, "beams": 2, "rep_penalty": 1.3, "len_penalty": 1.2},
     "long": {"temp": 0.8, "top_p": 0.92, "top_k": 50, "beams": 1, "rep_penalty": 1.1, "len_penalty": 0.8},
     "bullets": {"temp": 0.6, "top_p": 0.85, "top_k": 35, "beams": 2, "rep_penalty": 1.4, "len_penalty": 1.0},
     "action": {"temp": 0.7, "top_p": 0.88, "top_k": 45, "beams": 2, "rep_penalty": 1.2, "len_penalty": 1.0},
-    "highlights": {"temp": 0.75, "top_p": 0.9, "top_k": 45, "beams": 1, "rep_penalty": 1.25, "len_penalty": 0.9},
-    "executive": {"temp": 0.65, "top_p": 0.85, "top_k": 40, "beams": 2, "rep_penalty": 1.15, "len_penalty": 0.95}
 }
 
 LENGTH_MAP = {
-    'short': (100, 30), 'long': (300, 100), 'bullets': (200, 80),
-    'action': (180, 60), 'highlights': (150, 50), 'executive': (250, 80)
+    'long': (300, 100), 'bullets': (200, 80), 'action': (180, 60)
 }
 
 ACTION_KEYWORDS = [
@@ -203,7 +198,7 @@ def summarize_single_chunk(text, max_length, min_length, config):
 
 def format_summary_by_style(text, style):
     """Format summary text according to specified style."""
-    if not text or style not in ['bullets', 'action', 'highlights']:
+    if not text or style not in ['bullets', 'action']:
         return text.strip()
 
     sentences = [s.strip().rstrip('.') for s in text.replace('.', '.\n').split('\n') if s.strip()]
@@ -220,10 +215,6 @@ def format_summary_by_style(text, style):
                 formatted.append(f"{icon} {sentence}")
         return '\n'.join(formatted) if formatted else f"🔹 {text}"
 
-    elif style == "highlights":
-        long_sentences = [s for s in sentences if len(s.strip()) > 10]
-        return '\n'.join(f"⭐ {s}" for s in long_sentences) if len(long_sentences) > 1 else f"⭐ {text}"
-
     return text.strip()
 
 
@@ -238,7 +229,7 @@ def generate_summary(content, style, max_length, min_length):
     try:
         cleaned_text = preprocess_text(content)
         chunks = create_text_chunks(cleaned_text)
-        config = SUMMARY_CONFIGS.get(style, SUMMARY_CONFIGS["short"])
+        config = SUMMARY_CONFIGS.get(style, SUMMARY_CONFIGS["long"])
 
         if len(chunks) == 1:
             summary = summarize_single_chunk(chunks[0], max_length, min_length, config)
@@ -331,28 +322,7 @@ def create_summary_sections(email_body, attachments, summary_type, attachment_mo
 
 initialize_model()
 
-
-@app.route('/', methods=['GET'])
-def home():
-    return jsonify({
-        "message": "Email Summarization API is running",
-        "status": "active",
-        "endpoints": {"/health": "Health check", "/summarize": "POST - Summarize content",
-                      "/test": "GET - Test endpoint"},
-        "timestamp": datetime.now().isoformat()
-    })
-
-
 @app.route('/health', methods=['GET'])
-def health_check():
-    return jsonify({
-        'status': 'healthy' if model_loaded else 'degraded',
-        'model_loaded': model_loaded,
-        'timestamp': datetime.now().isoformat()
-    })
-
-
-@app.route('/test', methods=['GET'])
 def test_endpoint():
     test_text = "This is a test email to verify the summarization functionality is working correctly."
 
@@ -392,7 +362,6 @@ def summarize_email():
         if not include_email and not include_attachments:
             return jsonify({'success': False, 'error': 'No content selected'}), 400
 
-        request_id = str(uuid.uuid4())
         processed_attachments = process_attachments(attachments) if include_attachments else []
         max_length, min_length = LENGTH_MAP.get(summary_type, (150, 50))
 
@@ -440,7 +409,6 @@ def summarize_email():
             'summaryData': result.get('summaryData'),
             'summaryType': summary_type,
             'parsingOptions': parsing_options,
-            'requestId': request_id,
             'timestamp': datetime.now().isoformat(),
             'attachmentsProcessed': len(processed_attachments)
         })
@@ -456,8 +424,8 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-    print(f"🌐 Starting Flask server on port {port}")
-    print(f"🔧 Debug mode: {debug_mode}")
+    print(f"Starting Flask server on port {port}")
+    print(f"Debug mode: {debug_mode}")
 
     app.run(
         host='0.0.0.0',
