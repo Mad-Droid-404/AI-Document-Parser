@@ -24,13 +24,13 @@ try {
         cert: fs.readFileSync(path.join(certPath, 'localhost.crt'))
     };
 } catch (error) {
-    console.error('❌ SSL certificates not found. Run: npx office-addin-dev-certs install --machine');
+    console.error('SSL certificates not found. Run: npx office-addin-dev-certs install --machine');
     process.exit(1);
 }
 
 https.createServer(sslOptions, app).listen(port, () => {
-    console.log(`📧 Email Summarizer Dev Server`);
-    console.log(`📋 Manifest: https://localhost:${port}/manifest.xml`);
-    console.log(`🔧 Backend: Ensure Python server is running on port 5000`);
-    console.log(`🌐 Interface: https://localhost:${port}/taskpane.html`);
+    console.log(`Email Summarizer Dev Server`);
+    console.log(`Manifest: https://localhost:${port}/manifest.xml`);
+    console.log(`Backend: Ensure Python server is running on port 5000`);
+    console.log(`Interface: https://localhost:${port}/taskpane.html`);
 });

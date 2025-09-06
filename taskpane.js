@@ -18,7 +18,6 @@ function init() {
     if (copyBtn) copyBtn.onclick = copySummary;
     
     initParsingOptions();
-    addKeyboardShortcuts();
 }
 
 function initParsingOptions() {
@@ -146,13 +145,13 @@ async function sendToBackend(emailData) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
     });
-    
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
+
     const result = await response.json();
-    
+
+    if (!response.ok) {
+        throw new Error(result.error);
+    }
+
     if (!result.success) {
         throw new Error(result.error || 'Unknown error occurred');
     }
@@ -386,80 +385,6 @@ function showCopyModal(text) {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.remove();
     });
-}
-
-function addKeyboardShortcuts() {
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey || e.metaKey) {
-            switch(e.key) {
-                case 'Enter':
-                    generateSummary();
-                    break;
-                case 'c':
-                    const summaryContainer = document.getElementById('summary-container');
-                    if (summaryContainer?.style.display !== 'none' && !window.getSelection()?.toString().trim()) {
-                        e.preventDefault();
-                        copySummary();
-                    }
-                    break;
-                case 'e':
-                    const emailCheckbox = document.getElementById('include-email');
-                    if (emailCheckbox) {
-                        emailCheckbox.checked = !emailCheckbox.checked;
-                        emailCheckbox.dispatchEvent(new Event('change'));
-                        e.preventDefault();
-                    }
-                    break;
-                case 'a':
-                    const attachmentsCheckbox = document.getElementById('include-attachments');
-                    if (attachmentsCheckbox) {
-                        attachmentsCheckbox.checked = !attachmentsCheckbox.checked;
-                        attachmentsCheckbox.dispatchEvent(new Event('change'));
-                        e.preventDefault();
-                    }
-                    break;
-                default:
-                    if (e.key >= '1' && e.key <= '6') {
-                        const dropdown = document.getElementById('summary-type');
-                        const optionIndex = parseInt(e.key) - 1;
-                        if (dropdown && optionIndex < dropdown.options.length) {
-                            dropdown.selectedIndex = optionIndex;
-                            e.preventDefault();
-                        }
-                    }
-            }
-        }
-        
-        if (e.key === 'Escape') {
-            const modal = document.getElementById('copy-modal');
-            if (modal) modal.remove();
-        }
-    });
-}
-
-async function sendToBackend(emailData) {
-    const summaryType = document.getElementById('summary-type').value;
-    const includeEmail = document.getElementById('include-email').checked;
-    const includeAttachments = document.getElementById('include-attachments').checked;
-    const attachmentMode = document.querySelector('input[name="attachment-mode"]:checked')?.value || 'combined';
-    const outputMode = document.querySelector('input[name="output-mode"]:checked')?.value || 'combined';
-    
-    const response = await fetch(`${BACKEND_URL}/summarize`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            ...emailData,
-            summaryType,
-            parsingOptions: { includeEmail, includeAttachments, attachmentMode, outputMode }
-        })
-    });
-    
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    
-    const result = await response.json();
-    if (!result.success) throw new Error(result.error || 'Unknown error occurred');
-    
-    return result;
 }
 
 function displaySections(sections) {
