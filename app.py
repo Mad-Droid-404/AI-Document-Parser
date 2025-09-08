@@ -182,10 +182,9 @@ def summarize_single_chunk(text, max_length, min_length, config):
 
         result = summarizer(
             validated_text,
-            max_length=max_length,
+            max_new_tokens=max_length,
             min_length=min_length,
             do_sample=True,
-            truncation=True,
             **config
         )
 
@@ -254,24 +253,6 @@ def generate_summary(content, style, max_length, min_length):
 
         combined_summary = " ".join(filter(None, chunk_summaries))
 
-        if tokenizer:
-            try:
-                combined_tokens = tokenizer.encode(combined_summary, add_special_tokens=False)
-                if len(combined_tokens) > max_length * 2:
-                    # Final summarization round
-                    final_chunks = create_text_chunks(combined_summary)
-                    if len(final_chunks) > 1:
-                        # Keep most important parts (first and last)
-                        important_parts = [final_chunks[0]]
-                        if len(final_chunks) > 1:
-                            important_parts.append(final_chunks[-1])
-                        combined_summary = " ".join(important_parts)
-
-                    final_summary = summarize_single_chunk(combined_summary, max_length, min_length, config)
-                    return format_summary_by_style(final_summary, style)
-            except Exception:
-                pass
-
         return format_summary_by_style(combined_summary, style)
 
     except Exception as e:
@@ -312,7 +293,7 @@ def create_summary_sections(email_body, attachments, summary_type, attachment_mo
                                  att['content'] and att['content'].strip() and not att['content'].startswith('[Error')]
 
             if valid_attachments:
-                combined_content = "\n\n".join([f"--- {att['filename']} ---\n{att['content']}"
+                combined_content = "\n\n".join([f"{att['content']}"
                                                 for att in valid_attachments])
                 att_summary = generate_summary(combined_content, summary_type, 200, 50)
                 sections.append({'title': f"Attachments ({len(valid_attachments)} files)", 'content': att_summary})
@@ -384,14 +365,15 @@ def summarize_email():
                                      if att['content'].strip() and not att['content'].startswith('[Error')]
 
                 if attachment_mode == 'separate':
+                    attachment_summary_sections = create_summary_sections(email_body, valid_attachments, summary_type, attachment_mode)
                     att_summaries = []
-                    for att in valid_attachments:
-                        att_sum = generate_summary(att['content'], summary_type, 100, 20)
-                        att_summaries.append(f"{att['filename']}: {att_sum}")
+                    for att in attachment_summary_sections[1:]:
+                        att_sum = att['content']
+                        att_summaries.append(f"{att['title']}: {att_sum}")
                     if att_summaries:
-                        content_parts.append(" | ".join(att_summaries))
+                        content_parts.append(" . ".join(att_summaries))
                 else:
-                    combined_att = "\n\n".join([f"--- {att['filename']} ---\n{att['content']}"
+                    combined_att = "\n\n".join([f"{att['content']}"
                                                 for att in valid_attachments])
                     if combined_att.strip():
                         content_parts.append(combined_att)
@@ -399,9 +381,12 @@ def summarize_email():
             if not content_parts:
                 return jsonify({'success': False, 'error': 'No valid content to summarize'}), 400
 
-            full_content = "\n\n".join(content_parts)
-            summary = generate_summary(full_content, summary_type, max_length, min_length)
-            result = {'summary': summary}
+            full_content = "".join(content_parts)
+            if attachments and attachment_mode == 'separate':
+                result = {'summary': full_content}
+            else:
+                summary = generate_summary(full_content, summary_type, max_length, min_length)
+                result = {'summary': summary}
 
         return jsonify({
             'success': True,
